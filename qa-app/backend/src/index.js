@@ -7,22 +7,6 @@ const morgan = require('morgan');
 const jwt = require('express-jwt');
 const jwksRsa = require('jwks-rsa');
 
-//Auth0 Sincronization
-const checkJwt = jwt({
-    secret: jwksRsa.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://dev-w1pbqe3k.auth0.com/.well-know/jwks.json`
-  }),
-  
-  //validate user
-  audience: 'jQfSq71rJOKOTeOI4uz32FRXeMMwQlC8',
-  issuer: `https://dev-w1pbqe3k.auth0.com`,
-  algorithms: ['RS256']
-  
-  });
-
 //---------------
 const app = express();
 
@@ -56,6 +40,22 @@ if (question.length === 0 ) return res.status(404).send();
 res.send(question[0]);
 });
 
+//Auth0 Sincronization
+const checkJwt = jwt({
+  secret: jwksRsa.expressJwtSecret({
+  cache: true,
+  rateLimit: true,
+  jwksRequestsPerMinute: 5,
+  jwksUri: `https://dev-w1pbqe3k.auth0.com/.well-known/jwks.json`
+}),
+
+//validate user
+audience: 'jQfSq71rJOKOTeOI4uz32FRXeMMwQlC8',
+issuer: `https://dev-w1pbqe3k.auth0.com`,
+algorithms: ['RS256']
+
+});
+
 //Post questions
 app.post('/', checkJwt, (req, res) => {
 const {title, description} = req.body;
@@ -71,7 +71,7 @@ res.status(200).send();
 });
 
 //awnser to a questions
-app.post('/answer/:id', (req, res) => {
+app.post('/answer/:id', checkJwt, (req, res) => {
 const {answer} = req.body;
 
 const question = questions.filter(q => (q.id === parseInt(req.params.id)));
