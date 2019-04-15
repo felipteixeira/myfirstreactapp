@@ -51,7 +51,7 @@ const checkJwt = jwt({
 
 //validate user
 audience: 'jQfSq71rJOKOTeOI4uz32FRXeMMwQlC8',
-issuer: `https://dev-w1pbqe3k.auth0.com`,
+issuer: `https://dev-w1pbqe3k.auth0.com/`,
 algorithms: ['RS256']
 
 });
